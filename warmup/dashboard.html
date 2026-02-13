@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-page">
+  <div class="dashboard-header">
+    <div>
+      <h1>Bienvenido, <span id="userEmail"></span></h1>
+    </div>
+    <button onclick="handleLogout()" class="btn-logout">Cerrar Sesión</button>
+  </div>
+
+  <div class="dashboard-content">
+
+    <div class="cards-grid">
+      <div class="card">
+        <h3>Proyecto 1</h3>
+        <p>Descripción del proyecto</p>
+      </div>
+      <div class="card">
+        <h3>Proyecto 2</h3>
+        <p>Descripción del proyecto</p>
+      </div>
+      <div class="card">
+        <h3>Proyecto 3</h3>
+        <p>Descripción del proyecto</p>
+      </div>
+      <div class="card">
+        <h3>Proyecto 4</h3>
+        <p>Descripción del proyecto</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function checkAuth() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      const userEmail = localStorage.getItem('userEmail');
+      
+      if (!isLoggedIn) {
+        window.location.href = 'login.html';
+      } else {
+        document.getElementById('userEmail').textContent = userEmail;
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userEmail');
+      window.location.href = 'login.html';
+    }
+
+    checkAuth();
+  </script>
+</body>
+</html>
