@@ -7,34 +7,78 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="dashboard-page">
-  <div class="dashboard-header">
-    <div>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">
+        <h2>Dev App</h2>
+      </div>
+      <nav class="nav-links">
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="about.html">Acerca de</a>
+        <a href="services.html">Servicios</a>
+        <a href="contact.html">Contacto</a>
+        <button onclick="handleLogout()" class="btn-logout">Cerrar Sesión</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="dashboard-welcome">
       <h1>Bienvenido, <span id="userEmail"></span></h1>
+      <p>Gestiona todos tus proyectos desde aquí</p>
     </div>
-    <button onclick="handleLogout()" class="btn-logout">Cerrar Sesión</button>
-  </div>
 
-  <div class="dashboard-content">
-
-    <div class="cards-grid">
-      <div class="card">
-        <h3>Proyecto 1</h3>
-        <p>Descripción del proyecto</p>
-      </div>
-      <div class="card">
-        <h3>Proyecto 2</h3>
-        <p>Descripción del proyecto</p>
-      </div>
-      <div class="card">
-        <h3>Proyecto 3</h3>
-        <p>Descripción del proyecto</p>
-      </div>
-      <div class="card">
-        <h3>Proyecto 4</h3>
-        <p>Descripción del proyecto</p>
+    <div class="dashboard-content">
+      <div class="cards-grid">
+        <div class="card">
+          <h3>Proyecto 1</h3>
+          <p>Descripción del proyecto</p>
+        </div>
+        <div class="card">
+          <h3>Proyecto 2</h3>
+          <p>Descripción del proyecto</p>
+        </div>
+        <div class="card">
+          <h3>Proyecto 3</h3>
+          <p>Descripción del proyecto</p>
+        </div>
+        <div class="card">
+          <h3>Proyecto 4</h3>
+          <p>Descripción del proyecto</p>
+        </div>
       </div>
     </div>
-  </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Dev App</h3>
+          <p>Tu plataforma de desarrollo web</p>
+        </div>
+        <div class="footer-section">
+          <h4>Enlaces</h4>
+          <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="about.html">Acerca de</a></li>
+            <li><a href="services.html">Servicios</a></li>
+            <li><a href="contact.html">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Contacto</h4>
+          <p>Email: info@devapp.com</p>
+          <p>Teléfono: +34 666 777 888</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Dev App. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
 
   <script>
     function checkAuth() {
@@ -42,7 +86,7 @@
       const userEmail = localStorage.getItem('userEmail');
       
       if (!isLoggedIn) {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
       } else {
         document.getElementById('userEmail').textContent = userEmail;
       }
@@ -51,7 +95,7 @@
     function handleLogout() {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userEmail');
-      window.location.href = 'login.html';
+      window.location.href = 'index.html';
     }
 
     checkAuth();
