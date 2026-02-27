@@ -26,11 +26,21 @@
   <!-- MAIN CONTENT -->
   <main class="main-content">
     <div class="dashboard-welcome">
-      <h1>Bienvenido, <span id="userEmail"></span></h1>
+      <h1>Bienvenido, <span id="userName"></span></h1>
       <p>Gestiona todos tus proyectos desde aquí</p>
     </div>
 
     <div class="dashboard-content">
+      <div id="pokemon-section" class="pokemon-container">
+        <div class="pokemon-card">
+          <h2>Pokémon del Día</h2>
+          <div id="pokemon-content" style="text-align: center;">
+            <p>Cargando Pokémon...</p>
+          </div>
+          <button onclick="loadRandomPokemon()" class="btn-refresh">Cargar otro Pokémon</button>
+        </div>
+      </div>
+
       <div class="cards-grid">
         <div class="card">
           <h3>Proyecto 1</h3>
@@ -83,22 +93,50 @@
   <script>
     function checkAuth() {
       const isLoggedIn = localStorage.getItem('isLoggedIn');
-      const userEmail = localStorage.getItem('userEmail');
+      const userFullname = localStorage.getItem('userFullname');
       
       if (!isLoggedIn) {
         window.location.href = 'index.html';
       } else {
-        document.getElementById('userEmail').textContent = userEmail;
+        document.getElementById('userName').textContent = userFullname || 'Usuario';
       }
     }
 
     function handleLogout() {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userEmail');
+      localStorage.removeItem('userFullname');
       window.location.href = 'index.html';
     }
 
+    async function loadRandomPokemon() {
+      const randomId = Math.floor(Math.random() * 1025) + 1;
+      const pokemonContent = document.getElementById('pokemon-content');
+      
+      try {
+        pokemonContent.innerHTML = '<p>Cargando Pokémon...</p>';
+        
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`);
+        if (!response.ok) {
+          throw new Error('Error al cargar el Pokémon');
+        }
+        
+        const data = await response.json();
+        const pokemonName = data.name.charAt(0).toUpperCase() + data.name.slice(1);
+        const pokemonImage = data.sprites.other['official-artwork'].front_default || data.sprites.front_default;
+        
+        pokemonContent.innerHTML = `
+          <img src="${pokemonImage}" alt="${pokemonName}" style="max-width: 200px; height: auto; margin: 20px 0;">
+          <h3>${pokemonName}</h3>
+          <p>ID: #${data.id}</p>
+        `;
+      } catch (error) {
+        pokemonContent.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      }
+    }
+
     checkAuth();
+    loadRandomPokemon();
   </script>
 </body>
 </html>

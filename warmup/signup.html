@@ -102,9 +102,32 @@
         return;
       }
 
-      // Aquí iría la lógica de registro (sin funcionalidad aún)
-      console.log('Registro:', { fullname, email, password });
-      alert('Formulario de registro (sin funcionalidad aún)');
+      // Obtener usuarios existentes o inicializar array vacío
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+
+      // Verificar si el email ya existe
+      const existingUser = users.find(user => user.email === email);
+      if (existingUser) {
+        alert('El email ya está registrado');
+        return;
+      }
+
+      // Crear nuevo usuario
+      const newUser = {
+        fullname,
+        email,
+        password // En producción, hashear la contraseña
+      };
+
+      // Agregar al array y guardar en localStorage
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
+
+      console.log('Usuario registrado:', newUser);
+      alert('Registro exitoso. Ahora puedes iniciar sesión.');
+
+      // Redirigir al login
+      window.location.href = 'index.html';
     }
   </script>
 </body>

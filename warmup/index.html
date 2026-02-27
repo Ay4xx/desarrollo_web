@@ -78,9 +78,22 @@
     function handleLogin(event) {
       event.preventDefault();
       const email = document.getElementById('email').value;
-      localStorage.setItem('userEmail', email);
-      localStorage.setItem('isLoggedIn', 'true');
-      window.location.href = 'dashboard.html';
+      const password = document.getElementById('password').value;
+
+      // Obtener usuarios registrados
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+
+      // Buscar usuario con email y contraseña
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userFullname', user.fullname);
+        localStorage.setItem('isLoggedIn', 'true');
+        window.location.href = 'dashboard.html';
+      } else {
+        alert('Email o contraseña incorrectos');
+      }
     }
   </script>
 </body>

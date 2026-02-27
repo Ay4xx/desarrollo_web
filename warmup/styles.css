@@ -537,6 +537,70 @@ body {
     padding: 0 1rem;
   }
 }
+/* POKEMON SECTION */
+.pokemon-container {
+  margin-bottom: 2rem;
+}
+
+.pokemon-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto 2rem auto;
+}
+
+.pokemon-card h2 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.8rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.pokemon-card img {
+  display: block;
+  max-width: 200px;
+  height: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+.pokemon-card h3 {
+  margin: 1rem 0 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+.pokemon-card p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+.btn-refresh {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-refresh:hover {
+  background: #f0f0f0;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+.btn-refresh:active {
+  transform: scale(0.98);
+}
 
 @media (max-width: 480px) {
   .cards-grid,
@@ -550,5 +614,9 @@ body {
 
   .hero-section {
     padding: 2rem 1rem;
+  }
+
+  .pokemon-card {
+    max-width: 100%;
   }
 }
