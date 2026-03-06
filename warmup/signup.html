@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesión</title>
+  <title>Registrarse</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="auth-page">
@@ -14,7 +14,7 @@
         <h2>Dev App</h2>
       </div>
       <nav class="nav-links">
-        <a href="index.html" class="active">Inicio</a>
+        <a href="index.html">Inicio</a>
         <a href="about.html">Acerca de</a>
         <a href="services.html">Servicios</a>
         <a href="contact.html">Contacto</a>
@@ -22,11 +22,16 @@
     </div>
   </header>
 
-  <!-- LOGIN FORM -->
-  <div class="auth-box login-box">
-    <h1>Iniciar Sesión</h1>
+  <!-- SIGNUP FORM -->
+  <div class="auth-box signup-box">
+    <h1>Crear una Cuenta</h1>
 
-    <form class="auth-form" onsubmit="handleLogin(event)">
+    <form class="auth-form" onsubmit="handleSignup(event)">
+      <div class="form-group">
+        <label for="fullname">Nombre Completo</label>
+        <input type="text" id="fullname" placeholder="Tu nombre completo" required>
+      </div>
+
       <div class="form-group">
         <label for="email">Email</label>
         <input type="email" id="email" placeholder="tu@email.com" required>
@@ -37,11 +42,21 @@
         <input type="password" id="password" placeholder="Contraseña" required>
       </div>
 
-      <button type="submit" class="btn-primary">Entrar</button>
+      <div class="form-group">
+        <label for="confirm-password">Confirmar Contraseña</label>
+        <input type="password" id="confirm-password" placeholder="Confirmar contraseña" required>
+      </div>
+
+      <div class="form-group checkbox">
+        <input type="checkbox" id="terms" required>
+        <label for="terms">Acepto los términos y condiciones</label>
+      </div>
+
+      <button type="submit" class="btn-primary">Registrarse</button>
     </form>
 
     <div class="auth-footer">
-      <p>¿No tienes cuenta? <a href="signup.html">Registrarse aquí</a></p>
+      <p>¿Ya tienes cuenta? <a href="index.html">Inicia sesión aquí</a></p>
     </div>
   </div>
 
@@ -75,25 +90,44 @@
   </footer>
 
   <script>
-    function handleLogin(event) {
+    function handleSignup(event) {
       event.preventDefault();
+      const fullname = document.getElementById('fullname').value;
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
 
-      // Obtener usuarios registrados
-      const users = JSON.parse(localStorage.getItem('users')) || [];
-
-      // Buscar usuario con email y contraseña
-      const user = users.find(u => u.email === email && u.password === password);
-
-      if (user) {
-        localStorage.setItem('userEmail', email);
-        localStorage.setItem('userFullname', user.fullname);
-        localStorage.setItem('isLoggedIn', 'true');
-        window.location.href = 'dashboard.html';
-      } else {
-        alert('Email o contraseña incorrectos');
+      if (password !== confirmPassword) {
+        alert('Las contraseñas no coinciden');
+        return;
       }
+
+      // Obtener usuarios existentes o inicializar array vacío
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+
+      // Verificar si el email ya existe
+      const existingUser = users.find(user => user.email === email);
+      if (existingUser) {
+        alert('El email ya está registrado');
+        return;
+      }
+
+      // Crear nuevo usuario
+      const newUser = {
+        fullname,
+        email,
+        password // En producción, hashear la contraseña
+      };
+
+      // Agregar al array y guardar en localStorage
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
+
+      console.log('Usuario registrado:', newUser);
+      alert('Registro exitoso. Ahora puedes iniciar sesión.');
+
+      // Redirigir al login
+      window.location.href = 'index.html';
     }
   </script>
 </body>

@@ -7,54 +7,257 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="dashboard-page">
-  <div class="dashboard-header">
-    <div>
-      <h1>Bienvenido, <span id="userEmail"></span></h1>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">
+        <h2>Dev App</h2>
+      </div>
+      <nav class="nav-links">
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="about.html">Acerca de</a>
+        <a href="services.html">Servicios</a>
+        <a href="contact.html">Contacto</a>
+        <button onclick="handleLogout()" class="btn-logout">Cerrar Sesión</button>
+      </nav>
     </div>
-    <button onclick="handleLogout()" class="btn-logout">Cerrar Sesión</button>
-  </div>
+  </header>
 
-  <div class="dashboard-content">
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="dashboard-welcome">
+      <h1>Bienvenido, <span id="userName"></span></h1>
+      <p>Gestiona todos tus proyectos desde aquí</p>
+    </div>
 
-    <div class="cards-grid">
-      <div class="card">
-        <h3>Proyecto 1</h3>
-        <p>Descripción del proyecto</p>
-      </div>
-      <div class="card">
-        <h3>Proyecto 2</h3>
-        <p>Descripción del proyecto</p>
-      </div>
-      <div class="card">
-        <h3>Proyecto 3</h3>
-        <p>Descripción del proyecto</p>
-      </div>
-      <div class="card">
-        <h3>Proyecto 4</h3>
-        <p>Descripción del proyecto</p>
+    <div class="dashboard-content">
+      <div id="pokemon-section" class="pokemon-container">
+        <div class="pokemon-app">
+          <div class="pokemon-card">
+            <h2>Pokémon del Día</h2>
+            <div id="pokemon-content" class="pokemon-day-content">
+              <p>Cargando Pokémon...</p>
+            </div>
+            <button onclick="loadRandomPokemon()" class="btn-refresh">Cargar otro Pokémon</button>
+          </div>
+
+          <div class="pokemon-list">
+            <div class="pokemon-list-header">
+              <h2>Catálogo de Pokémon</h2>
+              <div class="pokemon-filters">
+                <input id="filter-name" type="text" placeholder="Buscar por nombre o ID" />
+                <select id="filter-type">
+                  <option value="">Todos los tipos</option>
+                </select>
+                <button id="clear-filters" class="btn-primary">Limpiar</button>
+              </div>
+            </div>
+
+            <div id="pokemon-grid" class="pokemon-grid">
+              <p>Cargando pokémon...</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Dev App</h3>
+          <p>Tu plataforma de desarrollo web</p>
+        </div>
+        <div class="footer-section">
+          <h4>Enlaces</h4>
+          <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="about.html">Acerca de</a></li>
+            <li><a href="services.html">Servicios</a></li>
+            <li><a href="contact.html">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Contacto</h4>
+          <p>Email: info@devapp.com</p>
+          <p>Teléfono: +34 666 777 888</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Dev App. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
 
   <script>
+    const MAX_POKEMON = 151;
+    let allPokemons = [];
+    let allTypes = [];
+
+    function capitalize(text) {
+      return text ? text.charAt(0).toUpperCase() + text.slice(1) : '';
+    }
+
     function checkAuth() {
       const isLoggedIn = localStorage.getItem('isLoggedIn');
-      const userEmail = localStorage.getItem('userEmail');
+      const userFullname = localStorage.getItem('userFullname');
       
       if (!isLoggedIn) {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
       } else {
-        document.getElementById('userEmail').textContent = userEmail;
+        document.getElementById('userName').textContent = userFullname || 'Usuario';
       }
     }
 
     function handleLogout() {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userEmail');
-      window.location.href = 'login.html';
+      localStorage.removeItem('userFullname');
+      window.location.href = 'index.html';
+    }
+
+    async function loadRandomPokemon() {
+      const randomId = Math.floor(Math.random() * 1025) + 1;
+      const pokemonContent = document.getElementById('pokemon-content');
+      
+      try {
+        pokemonContent.innerHTML = '<p>Cargando Pokémon...</p>';
+        
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`);
+        if (!response.ok) {
+          throw new Error('Error al cargar el Pokémon');
+        }
+        
+        const data = await response.json();
+        const pokemonName = capitalize(data.name);
+        const pokemonImage = data.sprites.other['official-artwork'].front_default || data.sprites.front_default;
+        
+        pokemonContent.innerHTML = `
+          <img src="${pokemonImage}" alt="${pokemonName}" class="pokemon-day-image" />
+          <h3>${pokemonName}</h3>
+          <p>ID: #${data.id}</p>
+        `;
+      } catch (error) {
+        pokemonContent.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      }
+    }
+
+    async function loadAllPokemons(limit = MAX_POKEMON) {
+      const grid = document.getElementById('pokemon-grid');
+      if (!grid) return;
+
+      grid.innerHTML = '<p>Cargando pokémon...</p>';
+
+      try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`);
+        if (!response.ok) throw new Error('No se pudo obtener la lista de Pokémon');
+
+        const data = await response.json();
+        const promises = data.results.map(async (item) => {
+          const detailRes = await fetch(item.url);
+          if (!detailRes.ok) throw new Error(`Error cargando detalles de ${item.name}`);
+          const detail = await detailRes.json();
+
+          return {
+            id: detail.id,
+            name: capitalize(detail.name),
+            image: detail.sprites.other?.['official-artwork']?.front_default || detail.sprites.front_default,
+            types: detail.types.map((t) => t.type.name),
+          };
+        });
+
+        const settled = await Promise.allSettled(promises);
+        allPokemons = settled
+          .filter((r) => r.status === 'fulfilled')
+          .map((r) => r.value);
+
+        allTypes = Array.from(new Set(allPokemons.flatMap((p) => p.types))).sort();
+        populateTypeFilter();
+        applyFilters();
+      } catch (error) {
+        grid.innerHTML = `<p style="color: red;">Error cargando pokémon: ${error.message}</p>`;
+        console.error(error);
+      }
+    }
+
+    function populateTypeFilter() {
+      const select = document.getElementById('filter-type');
+      if (!select) return;
+
+      select.innerHTML = `<option value="">Todos los tipos</option>` +
+        allTypes.map((t) => `<option value="${t}">${capitalize(t)}</option>`).join('');
+    }
+
+    function applyFilters() {
+      const query = (document.getElementById('filter-name')?.value || '').trim().toLowerCase();
+      const type = document.getElementById('filter-type')?.value;
+
+      const filtered = allPokemons.filter((p) => {
+        const matchesName = !query || p.name.toLowerCase().includes(query) || String(p.id) === query;
+        const matchesType = !type || p.types.includes(type);
+        return matchesName && matchesType;
+      });
+
+      renderPokemonCards(filtered);
+    }
+
+    function renderPokemonCards(pokemons) {
+      const grid = document.getElementById('pokemon-grid');
+      if (!grid) return;
+      if (!pokemons.length) {
+        grid.innerHTML = '<p>No se encontraron pokémones que coincidan.</p>';
+        return;
+      }
+
+      grid.innerHTML = pokemons
+        .map((p) => `
+          <div class="pokemon-card pokemon-card--small">
+            <div class="pokemon-card-header">
+              <img src="${p.image}" alt="${p.name}" loading="lazy" />
+              <div>
+                <h3>${p.name}</h3>
+                <p class="pokemon-id">#${String(p.id).padStart(3, '0')}</p>
+              </div>
+            </div>
+            <div class="pokemon-types">
+              ${p.types
+                .map((t) => `<span class="pokemon-type pokemon-type--${t}">${capitalize(t)}</span>`)
+                .join('')}
+            </div>
+          </div>
+        `)
+        .join('');
+    }
+
+    function setupFilters() {
+      const nameInput = document.getElementById('filter-name');
+      const typeSelect = document.getElementById('filter-type');
+      const clearBtn = document.getElementById('clear-filters');
+
+      if (nameInput) {
+        nameInput.addEventListener('input', () => {
+          applyFilters();
+        });
+      }
+
+      if (typeSelect) {
+        typeSelect.addEventListener('change', applyFilters);
+      }
+
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          if (nameInput) nameInput.value = '';
+          if (typeSelect) typeSelect.value = '';
+          applyFilters();
+        });
+      }
     }
 
     checkAuth();
+    setupFilters();
+    loadRandomPokemon();
+    loadAllPokemons();
   </script>
 </body>
 </html>
